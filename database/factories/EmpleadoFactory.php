@@ -47,7 +47,7 @@ class EmpleadoFactory extends Factory
             'salario_diario' => $this->faker->randomFloat(2, 300, 900),
             'jornada' => 'diurna',
             'banco' => $this->faker->randomElement(['BBVA', 'Santander', 'Banorte']),
-            'clabe' => $this->faker->numerify('####################'),
+            'clabe' => $this->faker->numerify('##################'),
             'estatus' => 'activo',
         ];
     }

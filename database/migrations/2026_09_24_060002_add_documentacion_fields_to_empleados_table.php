@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,9 +21,13 @@ return new class extends Migration
                 ->default('pendiente')->after('documentacion_comentario_revision');
         });
 
+        // Postgres emula enum con un CHECK constraint que ->change() no reemplaza solo.
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement('alter table empleados drop constraint if exists empleados_estatus_check');
+        }
+
         Schema::table('empleados', function (Blueprint $table) {
-            $table->enum('estatus', ['documentacion_pendiente', 'activo', 'baja'])
-                ->default('documentacion_pendiente')->change();
+            $table->string('estatus')->default('documentacion_pendiente')->change();
         });
     }
 
@@ -32,7 +37,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('empleados', function (Blueprint $table) {
-            $table->enum('estatus', ['activo', 'baja'])->default('activo')->change();
+            $table->string('estatus')->default('activo')->change();
         });
 
         Schema::table('empleados', function (Blueprint $table) {
